@@ -6,24 +6,21 @@ part of 'file_coverage.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FileCoverage _$FileCoverageFromJson(Map json) {
-  return $checkedNew('FileCoverage', json, () {
-    final val = FileCoverage(
-        $checkedConvert(json, 'path', (v) => v as String),
-        $checkedConvert(
-            json,
-            'coverage',
-            (v) => v == null
-                ? null
-                : const CoverageStringConverter().fromJson(v as String)));
-    return val;
-  });
-}
+FileCoverage _$FileCoverageFromJson(Map json) => $checkedCreate(
+      'FileCoverage',
+      json,
+      ($checkedConvert) {
+        final val = FileCoverage(
+          $checkedConvert('path', (v) => v as String),
+          $checkedConvert('coverage',
+              (v) => const CoverageStringConverter().fromJson(v as String)),
+        );
+        return val;
+      },
+    );
 
 Map<String, dynamic> _$FileCoverageToJson(FileCoverage instance) =>
     <String, dynamic>{
       'path': instance.path,
-      'coverage': instance.coverage == null
-          ? null
-          : const CoverageStringConverter().toJson(instance.coverage)
+      'coverage': const CoverageStringConverter().toJson(instance.coverage),
     };

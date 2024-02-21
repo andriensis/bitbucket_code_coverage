@@ -7,18 +7,18 @@ class PathPrefixFinder {
   const PathPrefixFinder();
 
   Future<String> findPrefix(String root, String lcovPath, String sourceFilePath) {
-    Directory lcovDirectory = File(lcovPath).parent;
+    var lcovDirectory = File(lcovPath).parent;
 
     return _parentPathsUntil(lcovDirectory, Directory(root))
         .firstWhere((FileSystemEntity entity) => existsSync(entity, sourceFilePath))
         .then((FileSystemEntity entity) => relative(entity, root))
-        .catchError((dynamic _) => "");
+        .catchError((dynamic _) => '');
   }
 
   String relative(FileSystemEntity entity, String root) => p.relative(entity.path, from: root);
 
   bool existsSync(FileSystemEntity entity, String sourceFilePath) =>
-      File("${entity.path}/$sourceFilePath").existsSync();
+      File('${entity.path}/$sourceFilePath').existsSync();
 
   Stream<FileSystemEntity> _parentPathsUntil(Directory from, Directory to) async* {
     do {

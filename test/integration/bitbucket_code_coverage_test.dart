@@ -3,7 +3,7 @@ import 'package:bitbucket_code_coverage/src/bitbucket_code_coverage_command_runn
 import 'package:test/test.dart';
 
 void main() {
-  test("should not fail if ran without parameters", () {
+  test('should not fail if ran without parameters', () {
     // given
     Iterable<String> arguments = [];
 
@@ -11,46 +11,46 @@ void main() {
     expect(() => BitbucketCodeCoverageCommandRunner().run(arguments), returnsNormally);
   });
 
-  final Iterable<String> post = ["post"];
-  final Iterable<String> url = ["--url", "http://localhost:7990"];
-  final Iterable<String> username = ["-u", "username"];
-  final Iterable<String> password = ["-p", "password"];
-  final Iterable<String> token = ["-t", "token"];
-  final Iterable<String> file = ["-f", "build/lcov.info"];
-  final Iterable<String> filePattern = ["--file-pattern", "**/lcov.info"];
+  final Iterable<String> post = ['post'];
+  final Iterable<String> url = ['--url', 'http://localhost:7990'];
+  final Iterable<String> username = ['-u', 'username'];
+  final Iterable<String> password = ['-p', 'password'];
+  final Iterable<String> token = ['-t', 'token'];
+  final Iterable<String> file = ['-f', 'build/lcov.info'];
+  final Iterable<String> filePattern = ['--file-pattern', '**/lcov.info'];
 
   List.of([
     Row(
         arguments: post,
-        expectedMessage: """Use "--url" to point to your Bitbucket server.""",
-        description: "without url"),
+        expectedMessage: '''Use "--url" to point to your Bitbucket server.''',
+        description: 'without url'),
     Row(
         arguments: [url, post].fold([], mergeIterables),
-        expectedMessage: """Use either "--token" or "--username" with "--password".""",
-        description: "with neither token nor username"),
+        expectedMessage: '''Use either "--token" or "--username" with "--password".''',
+        description: 'with neither token nor username'),
     Row(
         arguments: [url, post, token, username, password].fold([], mergeIterables),
-        expectedMessage: """Use either "--token" or "--username" with "--password".""",
-        description: "with both token and username"),
+        expectedMessage: '''Use either "--token" or "--username" with "--password".''',
+        description: 'with both token and username'),
     Row(
         arguments: [url, post, token].fold([], mergeIterables),
-        expectedMessage: """Use either "--file" or "--file-pattern".""",
-        description: "with neither file nor pattern"),
+        expectedMessage: '''Use either "--file" or "--file-pattern".''',
+        description: 'with neither file nor pattern'),
     Row(
         arguments: [url, post, token, file, filePattern].fold([], mergeIterables),
-        expectedMessage: """Use either "--file" or "--file-pattern".""",
-        description: "with both file and pattern"),
+        expectedMessage: '''Use either "--file" or "--file-pattern".''',
+        description: 'with both file and pattern'),
     Row(
         arguments: [url, post, token, file].fold([], mergeIterables),
-        expectedMessage: """Use "--commit-id" to specify the commit id.""",
-        description: "without commit id"),
+        expectedMessage: '''Use "--commit-id" to specify the commit id.''',
+        description: 'without commit id'),
   ]).forEach((Row row) {
-    test("should fail if ran ${row.description}", () {
+    test('should fail if ran ${row.description}', () {
       expect(
           () => BitbucketCodeCoverageCommandRunner().run(row.arguments),
           throwsA(TypeMatcher<UsageException>().having(
               (UsageException usageException) => usageException.message,
-              "message",
+              'message',
               contains(row.expectedMessage))));
     });
   });
@@ -61,7 +61,7 @@ class Row {
   final String expectedMessage;
   final String description;
 
-  const Row({this.arguments, this.expectedMessage, this.description});
+  const Row({required this.arguments, required this.expectedMessage, required this.description});
 }
 
 Iterable<T> mergeIterables<T>(Iterable<T> first, Iterable<T> second) => first.followedBy(second);

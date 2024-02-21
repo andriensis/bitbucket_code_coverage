@@ -4,19 +4,14 @@ import 'dart:io';
 import 'package:bitbucket_code_coverage/src/client/coverage_converter/coverage_converter.dart';
 import 'package:bitbucket_code_coverage/src/client/model/commit_coverage.dart';
 import 'package:glob/glob.dart';
+import 'package:glob/list_local_fs.dart';
 
 abstract class ConverterStrategy {
   Future<CommitCoverage> convertWith(CoverageConverter coverageConverter);
 
   factory ConverterStrategy.from(String path, String pattern, String workingDirectory) {
-    if (path != null) {
-      return _FileConverterStrategy(path);
-    } else if (pattern != null) {
-      return _PatternConverterStrategy(pattern, workingDirectory);
-    } else {
-      throw ArgumentError("Could not create CoverageStrategy from $path and $pattern");
+    return _FileConverterStrategy(path);
     }
-  }
 }
 
 class _FileConverterStrategy implements ConverterStrategy {

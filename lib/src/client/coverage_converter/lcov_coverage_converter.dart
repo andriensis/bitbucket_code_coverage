@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:bitbucket_code_coverage/src/client/coverage_converter/coverage_converter.dart';
 import 'package:bitbucket_code_coverage/src/client/coverage_converter/lcov/report_to_commit_coverage_mapper.dart';
 import 'package:bitbucket_code_coverage/src/client/model/commit_coverage.dart';
-import 'package:lcov/lcov.dart';
+import 'package:lcov_dart/lcov_dart.dart';
 
 class LcovCoverageConverter implements CoverageConverter {
   final String _workingDirectory;
@@ -14,8 +14,8 @@ class LcovCoverageConverter implements CoverageConverter {
 
   @override
   Future<CommitCoverage> convert(File coverageFile) async {
-    String coverage = await coverageFile.readAsString();
-    Report report = Report.fromCoverage(coverage);
+    var coverage = await coverageFile.readAsString();
+    var report = Report.fromCoverage(coverage);
     return _mapper.convert(report, _workingDirectory, coverageFile.path);
   }
 }

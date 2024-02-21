@@ -13,68 +13,68 @@ class PostCommand extends Command<Null> {
   final Logger logger = Logger.root;
 
   PostCommand() {
-    argParser.addOption("file", abbr: "f", help: "specifies coverage file path");
-    argParser.addOption("file-pattern", help: "specifies coverage file pattern");
-    argParser.addOption("working-directory", abbr: "d", help: "specifies the working directory");
-    argParser.addOption("commit-id", abbr: "c", help: "specifies commit id");
+    argParser.addOption('file', abbr: 'f', help: 'specifies coverage file path');
+    argParser.addOption('file-pattern', help: 'specifies coverage file pattern');
+    argParser.addOption('working-directory', abbr: 'd', help: 'specifies the working directory');
+    argParser.addOption('commit-id', abbr: 'c', help: 'specifies commit id');
   }
 
   @override
-  String get description => "posts code coverage data";
+  String get description => 'posts code coverage data';
 
   @override
-  String get name => "post";
+  String get name => 'post';
 
-  String get coverageFilePath => _fromArgResults("file");
+  String? get coverageFilePath => _fromArgResults('file');
 
-  String get coverageFilePattern => _fromArgResults("file-pattern");
+  String? get coverageFilePattern => _fromArgResults('file-pattern');
 
-  String get workingDirectory => _fromArgResults("working-directory");
+  String get workingDirectory => _fromArgResults('working-directory') ?? Directory.current.path;
 
-  String get commitId => _fromArgResults("commit-id");
+  String? get commitId => _fromArgResults('commit-id');
 
-  String get url => _fromGlobalResults("url");
+  String? get url => _fromGlobalResults('url');
 
-  String get token => _fromGlobalResults("token");
+  String? get token => _fromGlobalResults('token');
 
-  String get username => _fromGlobalResults("username");
+  String? get username => _fromGlobalResults('username');
 
-  String get password => _fromGlobalResults("password");
+  String? get password => _fromGlobalResults('password');
 
-  T _fromArgResults<T>(String name) => argResults[name] as T;
+  String? _fromArgResults<T>(String name) => argResults?[name] as String?;
 
-  T _fromGlobalResults<T>(String name) => globalResults[name] as T;
+  String? _fromGlobalResults<T>(String name) => globalResults?[name] as String?;
 
   @override
   FutureOr<Null> run() async {
     _validateArguments();
 
-    String currentDirectory = workingDirectory == null ? Directory.current.path : workingDirectory;
+    var currentDirectory = workingDirectory;
     CoverageConverter coverageConverter = LcovCoverageConverter(currentDirectory);
-    ConverterStrategy strategy =
-        ConverterStrategy.from(coverageFilePath, coverageFilePattern, workingDirectory);
-    logger.info("Converting code coverage in $currentDirectory");
-    CommitCoverage commitCoverage = await strategy.convertWith(coverageConverter);
+    var strategy =
+        ConverterStrategy.from(coverageFilePath ?? '', coverageFilePattern ?? '', workingDirectory);
+    logger.info('Converting code coverage in $currentDirectory');
+    var commitCoverage = await strategy.convertWith(coverageConverter);
 
     return _post(commitCoverage);
   }
 
   Future<Null> _post(CommitCoverage commitCoverage) {
-    logger.info("Publishing coverage data of commit ${commitId} to ${url} ");
-    CodeCoverageService codeCoverageService =
-        CodeCoverageService.from(url: url, token: token, username: username, password: password);
-    return codeCoverageService.post(commitId, commitCoverage).then((CommitCoverage commitCoverage) {
-      logger.info("Published coverage data to ${url}");
+    logger.info('Publishing coverage data of commit $commitId to $url ');
+    var codeCoverageService =
+        CodeCoverageService.from(url: url!, token: token ?? '', username: username ?? '', password: password ?? '');
+    return codeCoverageService.post(commitId!, commitCoverage).then((CommitCoverage commitCoverage) {
+      logger.info('Published coverage data to $url');
     });
   }
 
   void _validateArguments() {
     if (_fileAndFilePatternProvided() || _neitherFileNorFilePatternProvided()) {
-      usageException("""Use either "--file" or "--file-pattern".""");
+      usageException('''Use either "--file" or "--file-pattern".''');
     }
 
     if (_noCommitIdProvided()) {
-      usageException("""Use "--commit-id" to specify the commit id.""");
+      usageException('''Use "--commit-id" to specify the commit id.''');
     }
   }
 
